@@ -1,6 +1,6 @@
 # Projeto para exibir fotos de gato
 
-Este projeto tem como objetivo desenvolver um aplicativo para exibição de fotos de gatos, utilizando API
+Este projeto tem como objetivo desenvolver um aplicativo para exibição de fotos de gatos utilizando API
 
 # Integrantes desse projeto:
 
