@@ -1,42 +1,42 @@
-import React, { useState, useEffect } from 'eact';
-import { View, Image, Button, StyleSheet } from 'eact-native';
+import React, { useState, useEffect } from 'react';
+import { View, ScrollView, Image, Button, StyleSheet } from 'react-native';
 import axios from 'axios';
 
 const CatPhoto = () => {
-  const [catPhoto, setCatPhoto] = useState(null);
-  const [catPhotos, setCatPhotos] = useState([]); // novo estado para armazenar as fotos
+  const [catPhotos, setCatPhotos] = useState([]);
 
   useEffect(() => {
-    fetchCatPhoto();
+    fetchCatPhotos();
   }, []);
 
-  const fetchCatPhoto = async () => {
+  const fetchCatPhotos = async () => {
     try {
-      const response = await axios.get('https://api.thecatapi.com/v1/images/search');
-      setCatPhoto(response.data[0].url);
-      setCatPhotos([...catPhotos, response.data[0].url]); // adiciona a foto à lista de fotos
+      const responses = await axios.get('https://api.thecatapi.com/v1/images/search?limit=5');
+      const newPhotos = responses.data.map(photo => photo.url);
+      setCatPhotos(newPhotos);
     } catch (error) {
-      console.error('Não conseguimos buscar nenhuma foto de gato:', error);
+      console.error('Erro ao buscar fotos de gatos:', error);
     }
   };
 
   const handleButtonPress = async () => {
     try {
-      const responses = await Promise.all(Array(5).fill(0).map(() => axios.get('https://api.thecatapi.com/v1/images/search')));
-      const newPhotos = responses.map(response => response.data[0].url);
-      setCatPhotos([...catPhotos,...newPhotos]); // adiciona as novas fotos à lista de fotos
+      const responses = await axios.get('https://api.thecatapi.com/v1/images/search?limit=5');
+      const newPhotos = responses.data.map(photo => photo.url);
+      setCatPhotos([...catPhotos, ...newPhotos]);
     } catch (error) {
-      console.error('Não conseguimos buscar novas fotos de gato:', error);
+      console.error('Erro ao buscar novas fotos de gatos:', error);
     }
   };
 
   return (
     <View style={styles.container}>
-      {catPhoto && <Image source={{ uri: catPhoto }} style={styles.image} />}
-      {catPhotos.map((photo, index) => (
-        <Image key={index} source={{ uri: photo }} style={styles.image} />
-      ))}
-      <Button title="Aperte para visualizar mais fotos de gato" onPress={handleButtonPress} />
+      <ScrollView contentContainerStyle={styles.scrollView}>
+        {catPhotos.map((photo, index) => (
+          <Image key={index} source={{ uri: photo }} style={styles.image} />
+        ))}
+      </ScrollView>
+      <Button title="Mais Fotos de Gato" onPress={handleButtonPress} />
     </View>
   );
 };
@@ -45,6 +45,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scrollView: {
     alignItems: 'center',
   },
   image: {
